@@ -3,20 +3,26 @@
 import Foundation
 import XCTest
 
-// MARK: - StubbyResponder
+// MARK: - StubbyResponseProvider
 
-public protocol StubbyResponder {
+public protocol StubbyResponseProvider {
+  static func respondsTo(request: URLRequest) -> Bool
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error>
 }
 
 // MARK: - StubbyURLProtocol
 
-final class StubbyURLProtocol<Responder: StubbyResponder>: URLProtocol {
+final class StubbyURLProtocol<ResponseProvider: StubbyResponseProvider>: URLProtocol {
 
   // MARK: Internal
 
-  override class func canInit(with _: URLRequest) -> Bool {
-    true
+  override class func canInit(with request: URLRequest) -> Bool {
+    ResponseProvider.respondsTo(request: request)
+  }
+
+  override class func canInit(with task: URLSessionTask) -> Bool {
+    guard let request = task.currentRequest else { return false }
+    return ResponseProvider.respondsTo(request: request)
   }
 
   override class func canonicalRequest(for request: URLRequest) -> URLRequest {
@@ -27,7 +33,7 @@ final class StubbyURLProtocol<Responder: StubbyResponder>: URLProtocol {
     guard let client else { return }
     defer { client.urlProtocolDidFinishLoading(self) }
     do {
-      let response = try Responder.response(for: request)
+      let response = try ResponseProvider.response(for: request)
       switch response {
       case .success(let response):
         client.urlProtocol(self, didReceive: response.urlResponse, cacheStoragePolicy: response.cacheStoragePolicy)

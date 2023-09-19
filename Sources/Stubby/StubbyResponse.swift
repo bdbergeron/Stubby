@@ -29,21 +29,21 @@ public struct StubbyResponse {
 
 extension StubbyResponse {
   public init(
-    url: URL,
+    data: Data,
+    for url: URL,
     statusCode: Int = 200,
     httpVersion: String? = "HTTP/1.1",
     headerFields: [String : String]? = nil,
-    data: Data,
     cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed)
     throws
   {
+    let urlResponse = HTTPURLResponse(
+      url: url,
+      statusCode: statusCode,
+      httpVersion: httpVersion,
+      headerFields: headerFields)
     self.init(
-      urlResponse: try XCTUnwrap(HTTPURLResponse(
-        url: url,
-        statusCode: statusCode,
-        httpVersion: httpVersion,
-        headerFields: headerFields
-      )),
+      urlResponse: try XCTUnwrap(urlResponse),
       data: data,
       cacheStoragePolicy: cacheStoragePolicy)
   }
