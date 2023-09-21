@@ -30,7 +30,7 @@ jobs:
       - name: Test
         run: swift test --enable-code-coverage
       - name: Prepare Code Coverage
-        run: xcrun llvm-cov export -format="lcov" .build/debug/${{ env.PACKAGE_NAME }}PackageTests.xctest/Contents/MacOS/${{ env.PACKAGE_NAME }}PackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
+        run: xcrun llvm-cov export --ignore-filename-regex='(Tests)[/\\].*' -format="lcov" .build/debug/${{ env.PACKAGE_NAME }}PackageTests.xctest/Contents/MacOS/${{ env.PACKAGE_NAME }}PackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
