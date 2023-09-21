@@ -4,6 +4,7 @@ import Foundation
 
 // MARK: - StubbyResponse
 
+/// A stubbed response.
 public struct StubbyResponse {
 
   // MARK: Lifecycle

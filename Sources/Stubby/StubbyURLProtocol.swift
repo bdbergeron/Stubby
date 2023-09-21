@@ -4,8 +4,16 @@ import Foundation
 
 // MARK: - StubbyResponseProvider
 
+/// A type that provides Stubby responses.
 public protocol StubbyResponseProvider {
+  /// Determine whether or not this response provider can respond to the incoming `URLRequest`.
+  /// - Parameter request: The incoming `URLRequest`.
+  /// - Returns: If this response provider can handle the incoming request, return `true`. Otherwise, return `false`.
   static func respondsTo(request: URLRequest) -> Bool
+  
+  /// Provide the response for the incoming `URLRequest`.
+  /// - Parameter request: The incoming `URLRequest`.
+  /// - Returns: A `Result` containing either a ``StubbyResponse`` or an `Error`.
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error>
 }
 

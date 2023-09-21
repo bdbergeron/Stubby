@@ -3,7 +3,7 @@
 import Foundation
 
 extension URLSession {
-  /// Create a `URLSession` that leverages ``StubbyResponder`` for stubbing request handlers.
+  /// Create a `URLSession` with stubbed request handlers.
   /// - Parameter responseProvider: The type of ``StubbyResponseProvider`` to use for handling requests.
   /// - Parameter configuration: An `URLSessionConfiguration` object to be used by the created `URLSession`.
   ///   Defaults to `URLSessionConfiguration.ephemeral`.
