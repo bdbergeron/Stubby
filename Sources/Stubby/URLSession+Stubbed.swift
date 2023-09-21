@@ -14,7 +14,7 @@ extension URLSession {
   public static func stubbed<ResponseProvider: StubbyResponseProvider>(
     responseProvider: ResponseProvider.Type,
     configuration: URLSessionConfiguration = .ephemeral,
-    maintainExistingProtocolClasses: Bool = true)
+    maintainExistingProtocolClasses: Bool = false)
     -> URLSession
   {
     URLProtocol.registerClass(StubbyURLProtocol<ResponseProvider>.self)

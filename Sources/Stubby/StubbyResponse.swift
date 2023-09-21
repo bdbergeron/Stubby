@@ -81,4 +81,10 @@ extension StubbyResponse.Error: LocalizedError, CustomNSError {
       return "Failed to initialize an `HTTPURLResponse`."
     }
   }
+
+  var errorUserInfo: [String : Any] {
+    [
+      NSLocalizedDescriptionKey: errorDescription as Any,
+    ]
+  }
 }
