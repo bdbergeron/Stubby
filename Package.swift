@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
   name: "Stubby",
   platforms: [
-    .macOS(.v10_13),
-    .iOS(.v12),
+    .macOS(.v10_15),
+    .iOS(.v13),
   ],
   products: [
     .library(name: "Stubby", targets: ["Stubby"]),
