@@ -24,7 +24,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: macos-13
     env:
-      DOCUMENTATION_PATH: Stubby
+      DOCUMENTATION_PATH: docs
     steps:
       - name: Checkout
         uses: actions/checkout@v3
