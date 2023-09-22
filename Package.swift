@@ -12,6 +12,9 @@ let package = Package(
   products: [
     .library(name: "Stubby", targets: ["Stubby"]),
   ],
+  dependencies: [
+    .package(url: "https://github.com/apple/swift-docc-plugin", .upToNextMajor(from: "1.3.0")),
+  ],
   targets: [
     .target(
       name: "Stubby",
