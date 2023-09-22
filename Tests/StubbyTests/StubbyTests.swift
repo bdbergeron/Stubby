@@ -1,6 +1,8 @@
 import Stubby
 import XCTest
 
+// MARK: - StubbyTests
+
 final class StubbyTests: XCTestCase {
   func test_createStubbedURLSession() throws {
     let urlSession = URLSession.stubbed(responseProvider: TestResponseProvider.self)
@@ -16,7 +18,7 @@ final class StubbyTests: XCTestCase {
     XCTAssertTrue(protocolClasses.count > 1)
   }
 
-  func test_stubbyResponse_failsWithUnsupportedURLError() async throws {
+  func test_stubbyResponse_failsWithUnsupportedURLError() async {
     let urlSession = URLSession.stubbed(responseProvider: TestResponseProvider.self)
     let request = URLRequest(url: .githubURL)
     do {
@@ -44,6 +46,8 @@ final class StubbyTests: XCTestCase {
     }
   }
 }
+
+// MARK: - URL
 
 extension URL {
   static let repoURL = URL(string: "https://bdbergeron.github.io")!

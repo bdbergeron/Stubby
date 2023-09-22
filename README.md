@@ -34,7 +34,7 @@ struct SomeResponseProvider: StubbyResponseProvider {
     case .repoURL:
       return try .success(.init(data: try XCTUnwrap("Hello, world!".data(using: .utf8)), for: .repoURL))
     default:
-      return .failure(Error.noStubbedResponse(request))
+      return .failure(URLError(.unsupportedURL))
     }
   }
 }
@@ -59,7 +59,7 @@ final class StubbyTests: XCTestCase {
     }
   }
 
-  func test_stubbyResponse_failsWithUnsupportedURLError() async throws {
+  func test_stubbyResponse_failsWithUnsupportedURLError() async {
     let urlSession = URLSession.stubbed(responseProvider: SomeResponseProvider.self)
     let request = URLRequest(url: .githubURL)
     do {
