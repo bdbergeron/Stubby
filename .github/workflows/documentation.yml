@@ -31,7 +31,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Build documentation
-        run: swift package --allow-writing-to-directory ${{ env.DOCUMENTATION_PATH }} generate-documentation --disable-indexing --output-path ${{ env.DOCUMENTATION_PATH }} --transform-for-static-hosting
+        run: swift package --allow-writing-to-directory ${{ env.DOCUMENTATION_PATH }} generate-documentation --disable-indexing --include-extended-types --output-path ${{ env.DOCUMENTATION_PATH }} --transform-for-static-hosting
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
