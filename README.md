@@ -3,6 +3,7 @@ A little URLSession response stubbing library.
 
 ![build](https://github.com/bdbergeron/stubby/actions/workflows/build-and-test.yml/badge.svg)
 [![codecov](https://codecov.io/gh/bdbergeron/Stubby/graph/badge.svg?token=vIOaloNoGB)](https://codecov.io/gh/bdbergeron/Stubby)
+[![CodeFactor](https://www.codefactor.io/repository/github/bdbergeron/stubby/badge)](https://www.codefactor.io/repository/github/bdbergeron/stubby)
 
 ## Getting Started
 
