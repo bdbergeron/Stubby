@@ -24,7 +24,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: macos-13
+    runs-on: macos-15
     env:
       DOCUMENTATION_PATH: docs
     steps:
