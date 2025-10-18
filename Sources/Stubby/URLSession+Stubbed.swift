@@ -15,11 +15,11 @@ extension URLSession {
   public static func stubbed<ResponseProvider: StubbyResponseProvider>(
     responseProvider: ResponseProvider.Type,
     configuration: URLSessionConfiguration = .ephemeral,
-    maintainExistingProtocolClasses: Bool = false,
+    maintainExistingProtocolClasses: Bool = false
   ) -> URLSession {
     configuration.registerProtocolClass(
       StubbyURLProtocol<ResponseProvider>.self,
-      maintainExistingProtocolClasses: maintainExistingProtocolClasses,
+      maintainExistingProtocolClasses: maintainExistingProtocolClasses
     )
     return URLSession(configuration: configuration)
   }
@@ -35,14 +35,14 @@ extension URLSession {
   public static func stubbed<each ResponseProvider: StubbyResponseProvider>(
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
-    _ responseProviders: repeat each ResponseProvider,
+    _ responseProviders: repeat each ResponseProvider
   ) -> URLSession {
     if !maintainExistingProtocolClasses {
       configuration.protocolClasses = []
     }
     repeat configuration.registerProtocolClass(
       StubbyURLProtocol<each ResponseProvider>.self,
-      maintainExistingProtocolClasses: true,
+      maintainExistingProtocolClasses: true
     )
     return URLSession(configuration: configuration)
   }
@@ -58,7 +58,7 @@ extension URLSession {
   public static func stubbed(
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
-    _ stubs: [Stub],
+    _ stubs: [Stub]
   ) -> URLSession {
     for stub in stubs {
       ResponseProvider.registerStub(stub)
@@ -66,7 +66,7 @@ extension URLSession {
     return stubbed(
       responseProvider: ResponseProvider.self,
       configuration: configuration,
-      maintainExistingProtocolClasses: maintainExistingProtocolClasses,
+      maintainExistingProtocolClasses: maintainExistingProtocolClasses
     )
   }
 
@@ -83,14 +83,14 @@ extension URLSession {
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>,
+    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>
   ) -> URLSession {
     stubbed(
       configuration: configuration,
       maintainExistingProtocolClasses: maintainExistingProtocolClasses,
       [
         .init(url: url, response: response),
-      ],
+      ]
     )
   }
 }
@@ -103,7 +103,7 @@ public struct Stub {
 
   public init(
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>,
+    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>
   ) {
     self.url = url
     self.response = response
@@ -149,7 +149,7 @@ private struct ResponseProvider: StubbyResponseProvider {
 extension URLSessionConfiguration {
   fileprivate func registerProtocolClass(
     _ protocolClass: AnyClass,
-    maintainExistingProtocolClasses: Bool,
+    maintainExistingProtocolClasses: Bool
   ) {
     URLProtocol.registerClass(protocolClass)
     var protocolClasses = [AnyClass]()

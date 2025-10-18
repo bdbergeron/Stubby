@@ -18,7 +18,7 @@ public struct StubbyResponse {
   public init(
     urlResponse: URLResponse,
     data: Data,
-    cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed,
+    cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed
   ) {
     self.urlResponse = urlResponse
     self.data = data
@@ -53,14 +53,14 @@ extension StubbyResponse {
     statusCode: Int = 200,
     httpVersion: String? = "HTTP/1.1",
     headerFields: [String : String]? = nil,
-    cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed,
+    cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed
   ) throws {
     guard
       let urlResponse = HTTPURLResponse(
         url: url,
         statusCode: statusCode,
         httpVersion: httpVersion,
-        headerFields: headerFields,
+        headerFields: headerFields
       )
     else {
       throw Error.invalidHTTPURLResponse
@@ -68,7 +68,7 @@ extension StubbyResponse {
     self.init(
       urlResponse: urlResponse,
       data: data,
-      cacheStoragePolicy: cacheStoragePolicy,
+      cacheStoragePolicy: cacheStoragePolicy
     )
   }
 }

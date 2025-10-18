@@ -13,7 +13,7 @@ final class StubbyTests: XCTestCase {
   func test_createStubbedURLSession_maintainExistingProtocolClasses() throws {
     let urlSession = URLSession.stubbed(
       responseProvider: GithubResponseProvider.self,
-      maintainExistingProtocolClasses: true,
+      maintainExistingProtocolClasses: true
     )
     let protocolClasses = try XCTUnwrap(urlSession.configuration.protocolClasses)
     XCTAssertTrue(protocolClasses.count > 1)
@@ -51,7 +51,7 @@ final class StubbyTests: XCTestCase {
     let urlSession = URLSession.stubbed(url: .repoURL) { request in
       try .success(StubbyResponse(
         data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-        for: XCTUnwrap(request.url),
+        for: XCTUnwrap(request.url)
       ))
     }
   }
@@ -76,14 +76,14 @@ final class StubbyTests: XCTestCase {
         defer { githubExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Github".data(using: .utf8)),
-          for: XCTUnwrap(request.url),
+          for: XCTUnwrap(request.url)
         ))
       },
       Stub(url: .repoURL) { request in
         defer { repoExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-          for: XCTUnwrap(request.url),
+          for: XCTUnwrap(request.url)
         ))
       },
     ])
