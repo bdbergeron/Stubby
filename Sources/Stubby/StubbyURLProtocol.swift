@@ -29,7 +29,7 @@ final class StubbyURLProtocol<ResponseProvider: StubbyResponseProvider>: URLProt
 
   override class func canInit(with task: URLSessionTask) -> Bool {
     guard let request = task.originalRequest else { return false }
-    return ResponseProvider.respondsTo(request: request)
+    return canInit(with: request)
   }
 
   override class func canonicalRequest(for request: URLRequest) -> URLRequest {

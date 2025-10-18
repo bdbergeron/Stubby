@@ -5,23 +5,34 @@ import XCTest
 
 final class StubbyTests: XCTestCase {
   func test_createStubbedURLSession() throws {
-    let urlSession = URLSession.stubbed(responseProvider: TestResponseProvider.self)
+    let urlSession = URLSession.stubbed(responseProvider: GithubResponseProvider.self)
     let protocolClasses = try XCTUnwrap(urlSession.configuration.protocolClasses)
     XCTAssertTrue(protocolClasses.count == 1)
   }
 
   func test_createStubbedURLSession_maintainExistingProtocolClasses() throws {
     let urlSession = URLSession.stubbed(
-      responseProvider: TestResponseProvider.self,
-      maintainExistingProtocolClasses: true)
+      responseProvider: GithubResponseProvider.self,
+      maintainExistingProtocolClasses: true
+    )
     let protocolClasses = try XCTUnwrap(urlSession.configuration.protocolClasses)
     XCTAssertTrue(protocolClasses.count > 1)
   }
 
   func test_stubbyResponse_failsWithUnsupportedURLError() async {
     let urlSession = URLSession.stubbed(url: .githubURL) { _ in
-      .failure(URLError(.unsupportedURL))
+        .failure(URLError(.unsupportedURL))
     }
+  }
+
+  func test_createStubbedURLSession_multipleResponseProviders() throws {
+    let urlSession = URLSession.stubbed(GithubResponseProvider(), AppleResponseProvider())
+    let protocolClasses = try XCTUnwrap(urlSession.configuration.protocolClasses)
+    XCTAssertTrue(protocolClasses.count == 2)
+  }
+
+  func test_singleResponseProvider_response_failsWithUnsupportedURLError() async {
+    let urlSession = URLSession.stubbed(responseProvider: CatchallResponseProvider.self)
     let request = URLRequest(url: .githubURL)
     do {
       _ = try await urlSession.data(for: request)
@@ -40,8 +51,13 @@ final class StubbyTests: XCTestCase {
     let urlSession = URLSession.stubbed(url: .repoURL) { request in
       try .success(StubbyResponse(
         data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-        for: XCTUnwrap(request.url)))
+        for: XCTUnwrap(request.url)
+      ))
     }
+  }
+
+  func test_singleResponseProvider_response_succeeds() async {
+    let urlSession = URLSession.stubbed(responseProvider: GithubResponseProvider.self)
     let request = URLRequest(url: .repoURL)
     do {
       let (data, _) = try await urlSession.data(for: request)
@@ -60,13 +76,15 @@ final class StubbyTests: XCTestCase {
         defer { githubExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Github".data(using: .utf8)),
-          for: XCTUnwrap(request.url)))
+          for: XCTUnwrap(request.url)
+        ))
       },
       Stub(url: .repoURL) { request in
         defer { repoExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-          for: XCTUnwrap(request.url)))
+          for: XCTUnwrap(request.url)
+        ))
       },
     ])
     async let requests = [
@@ -92,11 +110,20 @@ final class StubbyTests: XCTestCase {
       XCTFail("Unexpected error: \(error)")
     }
   }
+
+  func test_multipleResponseProviders_response_succeeds() async throws {
+    let urlSession = URLSession.stubbed(GithubResponseProvider(), AppleResponseProvider())
+    let request = URLRequest(url: .appleDevelopersURL)
+    let (data, _) = try await urlSession.data(for: request)
+    let string = String(data: data, encoding: .utf8)
+    XCTAssertEqual(string, "Apple Developer")
+  }
 }
 
 // MARK: - URL
 
 extension URL {
-  static let repoURL = URL(string: "https://bdbergeron.github.io")!
-  static let githubURL = URL(string: "https://github.com")!
+  static let repoURL: URL = "https://github.com/bdbergeron/Stubby"
+  static let githubURL: URL = "https://github.com"
+  static let appleDevelopersURL: URL = "https://developers.apple.com"
 }
