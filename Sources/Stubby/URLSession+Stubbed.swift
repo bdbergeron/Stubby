@@ -11,7 +11,7 @@ extension URLSession {
   ///   - maintainExistingProtocolClasses: By default, the created `URLSession` will utilize _only_ the underlying `StubbyURLProtocol`
   ///     protocol class. To maintain any existing protocol classes specified by `URLSessionConfiguration.protocolClasses`, set this to `true`.
   /// - Returns: A new ``URLSession`` instance.
-  @available(*, deprecated, message: "Prefer stubbed(configuration:maintainExistingProtocolClasses:responseProviders:).")
+  @available(*, deprecated, message: "Use stubbed(configuration:maintainExistingProtocolClasses:_:)")
   public static func stubbed<ResponseProvider: StubbyResponseProvider>(
     responseProvider: ResponseProvider.Type,
     configuration: URLSessionConfiguration = .ephemeral,
@@ -19,10 +19,11 @@ extension URLSession {
   ) -> URLSession {
     configuration.registerProtocolClass(
       StubbyURLProtocol<ResponseProvider>.self,
-      maintainExistingProtocolClasses: maintainExistingProtocolClasses)
+      maintainExistingProtocolClasses: maintainExistingProtocolClasses,
+    )
     return URLSession(configuration: configuration)
   }
-  
+
   /// Create a `URLSession` with stubbed request handlers.
   /// - Parameters:
   ///   - responseProviders: A list of ``StubbyResponseProvider`` classes  to use for handling requests.
@@ -32,19 +33,20 @@ extension URLSession {
   ///     protocol class. To maintain any existing protocol classes specified by `URLSessionConfiguration.protocolClasses`, set this to `true`.
   /// - Returns: A new ``URLSession`` instance.
   public static func stubbed<each ResponseProvider: StubbyResponseProvider>(
-    responseProviders: repeat each ResponseProvider,
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
+    _ responseProviders: repeat each ResponseProvider,
   ) -> URLSession {
     if !maintainExistingProtocolClasses {
       configuration.protocolClasses = []
     }
     repeat configuration.registerProtocolClass(
       StubbyURLProtocol<each ResponseProvider>.self,
-      maintainExistingProtocolClasses: true)
+      maintainExistingProtocolClasses: true,
+    )
     return URLSession(configuration: configuration)
   }
-  
+
   /// Create a `URLSession` with stubbed request handlers.
   /// - Parameters:
   ///   - configuration: An `URLSessionConfiguration` object to be used by the created `URLSession`.
@@ -64,9 +66,10 @@ extension URLSession {
     return stubbed(
       responseProvider: ResponseProvider.self,
       configuration: configuration,
-      maintainExistingProtocolClasses: maintainExistingProtocolClasses)
+      maintainExistingProtocolClasses: maintainExistingProtocolClasses,
+    )
   }
-  
+
   /// Create a `URLSession` with stubbed request handlers.
   /// - Parameters:
   ///   - configuration: An `URLSessionConfiguration` object to be used by the created `URLSession`.
@@ -80,15 +83,15 @@ extension URLSession {
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>)
-    -> URLSession
-  {
+    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>,
+  ) -> URLSession {
     stubbed(
       configuration: configuration,
       maintainExistingProtocolClasses: maintainExistingProtocolClasses,
       [
         .init(url: url, response: response),
-      ])
+      ],
+    )
   }
 }
 
@@ -100,8 +103,8 @@ public struct Stub {
 
   public init(
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>)
-  {
+    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>,
+  ) {
     self.url = url
     self.response = response
   }
@@ -146,8 +149,8 @@ private struct ResponseProvider: StubbyResponseProvider {
 extension URLSessionConfiguration {
   fileprivate func registerProtocolClass(
     _ protocolClass: AnyClass,
-    maintainExistingProtocolClasses: Bool)
-  {
+    maintainExistingProtocolClasses: Bool,
+  ) {
     URLProtocol.registerClass(protocolClass)
     var protocolClasses = [AnyClass]()
     if

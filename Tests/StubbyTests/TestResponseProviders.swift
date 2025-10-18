@@ -2,7 +2,6 @@
 
 import Foundation
 import Stubby
-import XCTest
 
 // MARK: - CatchallResponseProvider
 
@@ -29,16 +28,17 @@ struct GithubResponseProvider: StubbyResponseProvider {
   }
 
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
-    let url = try XCTUnwrap(request.url)
-    switch StubbedURL(rawValue: url) {
+    switch StubbedURL(rawValue: request.url!) {
     case .repoURL:
       return try .success(.init(
-        data: try XCTUnwrap("Hello, world!".data(using: .utf8)),
-        for: StubbedURL.repoURL.rawValue))
+        data: "Hello, world!".data(using: .utf8)!,
+        for: StubbedURL.repoURL.rawValue,
+      ))
     case .githubURL:
       return try .success(.init(
-        data: try XCTUnwrap("Github".data(using: .utf8)),
-        for: StubbedURL.githubURL.rawValue))
+        data: "Github".data(using: .utf8)!,
+        for: StubbedURL.githubURL.rawValue,
+      ))
     default:
       return .failure(URLError(.unsupportedURL))
     }
@@ -57,12 +57,12 @@ struct AppleResponseProvider: StubbyResponseProvider {
   }
 
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
-    let url = try XCTUnwrap(request.url)
-    switch StubbedURL(rawValue: url) {
+    switch StubbedURL(rawValue: request.url!) {
     case .developers:
       return try .success(.init(
-        data: XCTUnwrap("Apple Developer".data(using: .utf8)),
-        for: StubbedURL.developers.rawValue))
+        data: "Apple Developer".data(using: .utf8)!,
+        for: StubbedURL.developers.rawValue,
+      ))
     default:
       return .failure(URLError(.unsupportedURL))
     }

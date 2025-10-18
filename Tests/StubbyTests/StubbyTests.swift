@@ -21,12 +21,12 @@ final class StubbyTests: XCTestCase {
 
   func test_stubbyResponse_failsWithUnsupportedURLError() async {
     let urlSession = URLSession.stubbed(url: .githubURL) { _ in
-      .failure(URLError(.unsupportedURL))
+        .failure(URLError(.unsupportedURL))
     }
   }
 
   func test_createStubbedURLSession_multipleResponseProviders() throws {
-    let urlSession = URLSession.stubbed(responseProviders: GithubResponseProvider(), AppleResponseProvider())
+    let urlSession = URLSession.stubbed(GithubResponseProvider(), AppleResponseProvider())
     let protocolClasses = try XCTUnwrap(urlSession.configuration.protocolClasses)
     XCTAssertTrue(protocolClasses.count == 2)
   }
@@ -51,7 +51,8 @@ final class StubbyTests: XCTestCase {
     let urlSession = URLSession.stubbed(url: .repoURL) { request in
       try .success(StubbyResponse(
         data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-        for: XCTUnwrap(request.url)))
+        for: XCTUnwrap(request.url),
+      ))
     }
   }
 
@@ -75,13 +76,15 @@ final class StubbyTests: XCTestCase {
         defer { githubExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Github".data(using: .utf8)),
-          for: XCTUnwrap(request.url)))
+          for: XCTUnwrap(request.url),
+        ))
       },
       Stub(url: .repoURL) { request in
         defer { repoExpectation.fulfill() }
         return try .success(StubbyResponse(
           data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-          for: XCTUnwrap(request.url)))
+          for: XCTUnwrap(request.url),
+        ))
       },
     ])
     async let requests = [
@@ -109,7 +112,7 @@ final class StubbyTests: XCTestCase {
   }
 
   func test_multipleResponseProviders_response_succeeds() async throws {
-    let urlSession = URLSession.stubbed(responseProviders: GithubResponseProvider(), AppleResponseProvider())
+    let urlSession = URLSession.stubbed(GithubResponseProvider(), AppleResponseProvider())
     let request = URLRequest(url: .appleDevelopersURL)
     let (data, _) = try await urlSession.data(for: request)
     let string = String(data: data, encoding: .utf8)
