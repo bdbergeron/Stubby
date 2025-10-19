@@ -11,10 +11,8 @@ import SwiftSyntaxMacros
 public struct StubMacro: DeclarationMacro {
   public static func expansion<Node: FreestandingMacroExpansionSyntax, Context: MacroExpansionContext>(
     of node: Node,
-    in context: Context)
-    throws
-    -> [DeclSyntax]
-  {
+    in context: Context
+  ) throws -> [DeclSyntax] {
     guard
       let stubbedURLString = node.arguments.first?.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue,
       let _ = URL(string: stubbedURLString)
@@ -45,16 +43,16 @@ public struct StubMacro: DeclarationMacro {
             parameterClause: FunctionParameterClauseSyntax {
               FunctionParameterSyntax(
                 firstName: .identifier("request"),
-                type: IdentifierTypeSyntax(name: .identifier("URLRequest")))
+                type: IdentifierTypeSyntax(name: .identifier("URLRequest"))
+              )
             },
-            returnClause: ReturnClauseSyntax(type: IdentifierTypeSyntax(name: .identifier("Bool")))))
-        {
-          CodeBlockItemListSyntax {
+            returnClause: ReturnClauseSyntax(type: IdentifierTypeSyntax(name: .identifier("Bool")))
+          )
+        ) {
             InfixOperatorExprSyntax(
               leftOperand: MemberAccessExprSyntax(base: DeclReferenceExprSyntax(baseName: .identifier("request")), name: .identifier("url")),
               operator: BinaryOperatorExprSyntax(operator: .binaryOperator("==")),
               rightOperand: DeclReferenceExprSyntax(baseName: .identifier("url")))
-          }
         }
 
         FunctionDeclSyntax(
@@ -67,7 +65,8 @@ public struct StubMacro: DeclarationMacro {
               FunctionParameterSyntax(
                 firstName: .identifier("for"),
                 secondName: .identifier("request"),
-                type: IdentifierTypeSyntax(name: .identifier("URLRequest")))
+                type: IdentifierTypeSyntax(name: .identifier("URLRequest"))
+              )
             },
             effectSpecifiers: FunctionEffectSpecifiersSyntax(throwsSpecifier: .keyword(.throws)),
             returnClause: ReturnClauseSyntax(
@@ -77,8 +76,12 @@ public struct StubMacro: DeclarationMacro {
                   arguments: GenericArgumentListSyntax {
                     GenericArgumentSyntax(argument: IdentifierTypeSyntax(name: .identifier("StubbyResponse")))
                     GenericArgumentSyntax(argument: IdentifierTypeSyntax(name: .identifier("Error")))
-                  })))))
-        {
+                  }
+                )
+              )
+            )
+          )
+        ) {
           response.statements
         }
       })

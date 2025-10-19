@@ -18,7 +18,8 @@ final class StubMacroTest: XCTestCase {
       #Stub(url: "https://github.com/bdbergeron/Stubby") { request in
         try .success(StubbyResponse(
           data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-          for: XCTUnwrap(request.url)))
+          for: XCTUnwrap(request.url)
+        ))
       }
       """
     } expansion: {
@@ -32,7 +33,8 @@ final class StubMacroTest: XCTestCase {
         static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
           try .success(StubbyResponse(
             data: XCTUnwrap("Hello, world!".data(using: .utf8)),
-            for: XCTUnwrap(request.url)))
+            for: XCTUnwrap(request.url)
+          ))
         }
       }
       #endif
@@ -57,6 +59,74 @@ final class StubMacroTest: XCTestCase {
         }
         static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
           .failure(URLError(.unsupportedURL))
+        }
+      }
+      #endif
+      """
+    }
+  }
+
+  func test_expansion_multipleStubs() throws {
+    assertMacro {
+      """
+      #Stub(url: "https://github.com/bdbergeron/Stubby") { request in
+        try .success(StubbyResponse(
+          data: XCTUnwrap("Hello, world!".data(using: .utf8)),
+          for: XCTUnwrap(request.url)
+        ))
+      }
+      
+      #Stub(url: "https://github.com") { _ in
+        .failure(URLError(.unsupportedURL))
+      }
+      
+      #Stub(url: "https://apple.com") { _ in
+        try .success(StubbyResponse(
+          data: XCTUnwrap("Think different!".data(using: .utf8)),
+          for: XCTUnwrap(request.url)
+        ))
+      }
+      """
+    } expansion: {
+      """
+      #if DEBUG
+      struct __macro_local_12StubResponsefMu_: StubbyResponseProvider {
+        static let url = URL(string: "https://github.com/bdbergeron/Stubby")!
+        static func respondsTo(request: URLRequest) -> Bool {
+          request.url == url
+        }
+        static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
+          try .success(StubbyResponse(
+            data: XCTUnwrap("Hello, world!".data(using: .utf8)),
+            for: XCTUnwrap(request.url)
+          ))
+        }
+      }
+      #endif
+      
+      #if DEBUG
+      struct __macro_local_12StubResponsefMu0_: StubbyResponseProvider {
+        static let url = URL(string: "https://github.com")!
+        static func respondsTo(request: URLRequest) -> Bool {
+          request.url == url
+        }
+        static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
+          .failure(URLError(.unsupportedURL))
+        }
+      }
+      #endif
+      
+      #if DEBUG
+      struct __macro_local_12StubResponsefMu1_: StubbyResponseProvider {
+        static let url = URL(string: "https://apple.com")!
+        static func respondsTo(request: URLRequest) -> Bool {
+          request.url == url
+        }
+        static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
+          try .success(StubbyResponse(
+            data: XCTUnwrap("Think different!".data(using: .utf8)),
+            for: XCTUnwrap(request.url)
+          ))
         }
       }
       #endif
