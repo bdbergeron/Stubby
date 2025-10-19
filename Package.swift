@@ -16,7 +16,7 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-macro-testing", .upToNextMajor(from: "0.6.4")),
     .package(url: "https://github.com/swiftlang/swift-docc-plugin", .upToNextMajor(from: "1.4.5")),
-    .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"600.0.0"),
+    .package(url: "https://github.com/swiftlang/swift-syntax", "509.0.0"..<"603.0.0"),
   ],
   targets: [
     .target(
