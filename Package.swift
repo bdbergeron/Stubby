@@ -34,6 +34,7 @@ let package = Package(
     .target(
       name: "StubbyMacros",
       dependencies: [
+        "Stubby",
         "StubbyMacrosPlugin",
       ]
     ),
