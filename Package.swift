@@ -53,5 +53,13 @@ let package = Package(
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),
-  ]
+  ],
+  swiftLanguageVersions: [.v5]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings?.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+}
