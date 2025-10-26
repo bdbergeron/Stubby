@@ -19,25 +19,40 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+  
+env:
+  PACKAGE_NAME: Stubby
 
 jobs:
   build:
     name: Build and Test
     runs-on: macos-15
-    env:
-      PACKAGE_NAME: Stubby
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
+      
       - name: Build
         run: swift build
+      
       - name: Test
+        id: test
         run: swift test --enable-code-coverage
+      
       - name: Prepare Code Coverage
-        run: xcrun llvm-cov export --ignore-filename-regex='(Tests)[/\\].*' -format="lcov" .build/debug/${{ env.PACKAGE_NAME }}PackageTests.xctest/Contents/MacOS/${{ env.PACKAGE_NAME }}PackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
+        id: prepare-codecov-coverage-report
+        if: steps.test.outcome == 'success'
+        continue-on-error: true
+        run: |
+          set -o pipefail && \
+          xcrun llvm-cov export \
+          -format="lcov" \
+          --ignore-filename-regex='(Tests)[/\\].*' \
+          -instr-profile .build/debug/codecov/default.profdata \
+          .build/debug/${{ env.PACKAGE_NAME }}PackageTests.xctest/Contents/MacOS/${{ env.PACKAGE_NAME }}PackageTests \
+          > info.lcov
+      
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        if: steps.prepare-codecov-coverage-report.outcome == 'success'
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-          fail_ci_if_error: true
