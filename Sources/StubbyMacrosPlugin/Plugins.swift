@@ -6,6 +6,6 @@ import SwiftSyntaxMacros
 @main
 struct StubbyMacrosPlugin: CompilerPlugin {
   let providingMacros: [Macro.Type] = [
-    StubMacro.self,
+    StubMacro.self
   ]
 }

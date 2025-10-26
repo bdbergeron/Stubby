@@ -9,13 +9,13 @@ import SwiftSyntaxMacros
 // MARK: - StubMacro
 
 public struct StubMacro: DeclarationMacro {
-  public static func expansion<Node: FreestandingMacroExpansionSyntax, Context: MacroExpansionContext>(
-    of node: Node,
-    in context: Context
+  public static func expansion(
+    of node: some FreestandingMacroExpansionSyntax,
+    in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
     guard
       let stubbedURLString = node.arguments.first?.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue,
-      let _ = URL(string: stubbedURLString)
+      URL(string: stubbedURLString) != nil
     else {
       context.addDiagnostics(from: StubDiagnostic.invalidURL, node: node.arguments)
       return []
@@ -49,10 +49,14 @@ public struct StubMacro: DeclarationMacro {
             returnClause: ReturnClauseSyntax(type: IdentifierTypeSyntax(name: .identifier("Bool")))
           )
         ) {
-            InfixOperatorExprSyntax(
-              leftOperand: MemberAccessExprSyntax(base: DeclReferenceExprSyntax(baseName: .identifier("request")), name: .identifier("url")),
-              operator: BinaryOperatorExprSyntax(operator: .binaryOperator("==")),
-              rightOperand: DeclReferenceExprSyntax(baseName: .identifier("url")))
+          InfixOperatorExprSyntax(
+            leftOperand: MemberAccessExprSyntax(
+              base: DeclReferenceExprSyntax(baseName: .identifier("request")),
+              name: .identifier("url")
+            ),
+            operator: BinaryOperatorExprSyntax(operator: .binaryOperator("==")),
+            rightOperand: DeclReferenceExprSyntax(baseName: .identifier("url"))
+          )
         }
 
         FunctionDeclSyntax(
@@ -84,7 +88,8 @@ public struct StubMacro: DeclarationMacro {
         ) {
           response.statements
         }
-      })
+      }
+    )
 
     return [
       "#if DEBUG",
@@ -93,6 +98,8 @@ public struct StubMacro: DeclarationMacro {
     ]
   }
 }
+
+// MARK: - StubDiagnostic
 
 enum StubDiagnostic: String, Error, DiagnosticMessage {
   case invalidURL

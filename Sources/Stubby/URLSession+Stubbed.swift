@@ -13,7 +13,7 @@ extension URLSession {
   /// - Returns: A new ``URLSession`` instance.
   @available(*, deprecated, message: "Use stubbed(configuration:maintainExistingProtocolClasses:_:)")
   public static func stubbed<ResponseProvider: StubbyResponseProvider>(
-    responseProvider: ResponseProvider.Type,
+    responseProvider _: ResponseProvider.Type,
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false
   ) -> URLSession {
@@ -35,7 +35,7 @@ extension URLSession {
   public static func stubbed<each ResponseProvider: StubbyResponseProvider>(
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
-    _ responseProviders: repeat each ResponseProvider
+    _: repeat each ResponseProvider
   ) -> URLSession {
     if !maintainExistingProtocolClasses {
       configuration.protocolClasses = []
@@ -89,7 +89,7 @@ extension URLSession {
       configuration: configuration,
       maintainExistingProtocolClasses: maintainExistingProtocolClasses,
       [
-        .init(url: url, response: response),
+        .init(url: url, response: response)
       ]
     )
   }
@@ -126,7 +126,7 @@ private struct ResponseProvider: StubbyResponseProvider {
     stubs[stub.url] = stub
   }
 
-  static func respondsTo(request: URLRequest) -> Bool {
+  static func respondsTo(request _: URLRequest) -> Bool {
     true
   }
 

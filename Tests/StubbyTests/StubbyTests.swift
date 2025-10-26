@@ -19,9 +19,9 @@ final class StubbyTests: XCTestCase {
     XCTAssertTrue(protocolClasses.count > 1)
   }
 
-  func test_stubbyResponse_failsWithUnsupportedURLError() async {
+  func test_stubbyResponse_failsWithUnsupportedURLError() {
     let urlSession = URLSession.stubbed(url: .githubURL) { _ in
-        .failure(URLError(.unsupportedURL))
+      .failure(URLError(.unsupportedURL))
     }
   }
 
@@ -47,7 +47,7 @@ final class StubbyTests: XCTestCase {
     }
   }
 
-  func test_stubbyResponse_succeeds() async {
+  func test_stubbyResponse_succeeds() {
     let urlSession = URLSession.stubbed(url: .repoURL) { request in
       try .success(StubbyResponse(
         data: XCTUnwrap("Hello, world!".data(using: .utf8)),
@@ -99,7 +99,7 @@ final class StubbyTests: XCTestCase {
     XCTAssertEqual(String(data: githubData, encoding: .utf8), "Github")
     XCTAssertEqual(String(data: repoData, encoding: .utf8), "Hello, world!")
     do {
-      _ = try await urlSession.data(from: URL(string: "https://bradbergeron.com")!)
+      _ = try await urlSession.data(from: try XCTUnwrap(URL(string: "https://bradbergeron.com")))
       XCTFail("Should fail.")
     } catch let error as NSError {
       XCTAssertEqual(error.domain, URLError.errorDomain)
