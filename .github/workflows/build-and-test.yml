@@ -66,19 +66,26 @@ jobs:
       - name: Build
         run: |
           set -o pipefail && \
-          xcodebuild build \
+          xcodebuild build-for-testing \
           -scheme "${{ env.XCODE_SCHEME }}" \
           -destination "${{ steps.set-xcode-destination.outputs.destination }}" \
           -derivedDataPath "${{ env.XCODE_DERIVED_DATA_PATH }}" \
+          -testProductsPath "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xctestproducts" \
           -skipPackagePluginValidation \
           | xcbeautify --renderer github-actions
 
+      - name: Save test products
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xctestproducts"
+          path: "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xctestproducts"
+      
       - name: Test
         id: test
         run: |  
           set -o pipefail && \
-          xcodebuild test \
-          -scheme "${{ env.XCODE_SCHEME }}" \
+          xcodebuild test-without-building \
+          -testProductsPath "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xctestproducts" \
           -destination "${{ steps.set-xcode-destination.outputs.destination }}" \
           -derivedDataPath "${{ env.XCODE_DERIVED_DATA_PATH }}" \
           -resultBundlePath "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xcresult" \
