@@ -30,14 +30,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      
+
       - name: Build
         run: swift build
-      
+
       - name: Test
         id: test
         run: swift test --enable-code-coverage
-      
+
       - name: Prepare Code Coverage
         id: prepare-codecov-coverage-report
         if: steps.test.outcome == 'success'
@@ -50,7 +50,7 @@ jobs:
           -instr-profile .build/debug/codecov/default.profdata \
           .build/debug/${{ env.PACKAGE_NAME }}PackageTests.xctest/Contents/MacOS/${{ env.PACKAGE_NAME }}PackageTests \
           > info.lcov
-      
+
       - name: Upload coverage to Codecov
         if: steps.prepare-codecov-coverage-report.outcome == 'success'
         uses: codecov/codecov-action@v4
