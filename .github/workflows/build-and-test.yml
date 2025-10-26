@@ -67,7 +67,7 @@ jobs:
         run: |
           set -o pipefail && \
           xcodebuild build-for-testing \
-          -scheme "${{ env.XCODE_SCHEME }}" \
+          -scheme "${{ env.XCODE_SCHEME }}-Package" \
           -destination "${{ steps.set-xcode-destination.outputs.destination }}" \
           -derivedDataPath "${{ env.XCODE_DERIVED_DATA_PATH }}" \
           -testProductsPath "${{ env.XCODE_SCHEME }}-${{ matrix.destination }}.xctestproducts" \
