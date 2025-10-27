@@ -52,6 +52,6 @@ let package = Package(
         "StubbyMacrosPlugin",
         .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
-    )
+    ),
   ]
 )

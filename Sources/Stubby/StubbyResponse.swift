@@ -52,7 +52,7 @@ extension StubbyResponse {
     for url: URL,
     statusCode: Int = 200,
     httpVersion: String? = "HTTP/1.1",
-    headerFields: [String : String]? = nil,
+    headerFields: [String: String]? = nil,
     cacheStoragePolicy: URLCache.StoragePolicy = .notAllowed
   ) throws {
     guard
@@ -73,19 +73,19 @@ extension StubbyResponse {
   }
 }
 
-// MARK: - StubbyResponse.Error + CustomNSError
+// MARK: - StubbyResponse.Error + LocalizedError, CustomNSError
 
 extension StubbyResponse.Error: LocalizedError, CustomNSError {
   var errorDescription: String? {
     switch self {
     case .invalidHTTPURLResponse:
-      return "Failed to initialize an `HTTPURLResponse`."
+      "Failed to initialize an `HTTPURLResponse`."
     }
   }
 
-  var errorUserInfo: [String : Any] {
+  var errorUserInfo: [String: Any] {
     [
-      NSLocalizedDescriptionKey: errorDescription as Any,
+      NSLocalizedDescriptionKey: errorDescription as Any
     ]
   }
 }

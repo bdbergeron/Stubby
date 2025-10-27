@@ -10,7 +10,7 @@ public protocol StubbyResponseProvider {
   /// - Parameter request: The incoming `URLRequest`.
   /// - Returns: If this response provider can handle the incoming request, return `true`. Otherwise, return `false`.
   static func respondsTo(request: URLRequest) -> Bool
-  
+
   /// Provide the response for the incoming `URLRequest`.
   /// - Parameter request: The incoming `URLRequest`.
   /// - Returns: A `Result` containing either a ``StubbyResponse`` or an `Error`.
@@ -20,8 +20,6 @@ public protocol StubbyResponseProvider {
 // MARK: - StubbyURLProtocol
 
 final class StubbyURLProtocol<ResponseProvider: StubbyResponseProvider>: URLProtocol {
-
-  // MARK: Internal
 
   override class func canInit(with request: URLRequest) -> Bool {
     ResponseProvider.respondsTo(request: request)
@@ -45,6 +43,7 @@ final class StubbyURLProtocol<ResponseProvider: StubbyResponseProvider>: URLProt
       case .success(let response):
         client.urlProtocol(self, didReceive: response.urlResponse, cacheStoragePolicy: response.cacheStoragePolicy)
         client.urlProtocol(self, didLoad: response.data)
+
       case .failure(let error):
         throw error
       }

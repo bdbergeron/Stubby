@@ -6,11 +6,11 @@ import Stubby
 // MARK: - CatchallResponseProvider
 
 struct CatchallResponseProvider: StubbyResponseProvider {
-  static func respondsTo(request: URLRequest) -> Bool {
+  static func respondsTo(request _: URLRequest) -> Bool {
     true
   }
 
-  static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
+  static func response(for _: URLRequest) throws -> Result<StubbyResponse, Error> {
     .failure(URLError(.unsupportedURL))
   }
 }
@@ -30,17 +30,19 @@ struct GithubResponseProvider: StubbyResponseProvider {
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
     switch StubbedURL(rawValue: request.url!) {
     case .repoURL:
-      return try .success(.init(
+      try .success(.init(
         data: "Hello, world!".data(using: .utf8)!,
-        for: StubbedURL.repoURL.rawValue,
+        for: StubbedURL.repoURL.rawValue
       ))
+
     case .githubURL:
-      return try .success(.init(
+      try .success(.init(
         data: "Github".data(using: .utf8)!,
-        for: StubbedURL.githubURL.rawValue,
+        for: StubbedURL.githubURL.rawValue
       ))
+
     default:
-      return .failure(URLError(.unsupportedURL))
+      .failure(URLError(.unsupportedURL))
     }
   }
 }
@@ -51,7 +53,7 @@ struct AppleResponseProvider: StubbyResponseProvider {
   enum StubbedURL: URL, CaseIterable {
     case developers = "https://developers.apple.com"
   }
-  
+
   static func respondsTo(request: URLRequest) -> Bool {
     request.url.map(StubbedURL.contains(url:)) ?? false
   }
@@ -59,12 +61,13 @@ struct AppleResponseProvider: StubbyResponseProvider {
   static func response(for request: URLRequest) throws -> Result<StubbyResponse, Error> {
     switch StubbedURL(rawValue: request.url!) {
     case .developers:
-      return try .success(.init(
+      try .success(.init(
         data: "Apple Developer".data(using: .utf8)!,
-        for: StubbedURL.developers.rawValue,
+        for: StubbedURL.developers.rawValue
       ))
+
     default:
-      return .failure(URLError(.unsupportedURL))
+      .failure(URLError(.unsupportedURL))
     }
   }
 }

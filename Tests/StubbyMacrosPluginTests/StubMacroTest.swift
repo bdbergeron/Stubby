@@ -12,7 +12,7 @@ final class StubMacroTest: XCTestCase {
     }
   }
 
-  func test_expansion_successResponse() throws {
+  func test_expansion_successResponse() {
     assertMacro {
       """
       #Stub(url: "https://github.com/bdbergeron/Stubby") { request in
@@ -42,7 +42,7 @@ final class StubMacroTest: XCTestCase {
     }
   }
 
-  func test_expansion_failureResponse() throws {
+  func test_expansion_failureResponse() {
     assertMacro {
       """
       #Stub(url: "https://github.com/bdbergeron/Stubby") { _ in
@@ -66,7 +66,7 @@ final class StubMacroTest: XCTestCase {
     }
   }
 
-  func test_expansion_multipleStubs() throws {
+  func test_expansion_multipleStubs() {
     assertMacro {
       """
       #Stub(url: "https://github.com/bdbergeron/Stubby") { request in
@@ -75,11 +75,11 @@ final class StubMacroTest: XCTestCase {
           for: XCTUnwrap(request.url)
         ))
       }
-      
+
       #Stub(url: "https://github.com") { _ in
         .failure(URLError(.unsupportedURL))
       }
-      
+
       #Stub(url: "https://apple.com") { _ in
         try .success(StubbyResponse(
           data: XCTUnwrap("Think different!".data(using: .utf8)),
@@ -103,7 +103,7 @@ final class StubMacroTest: XCTestCase {
         }
       }
       #endif
-      
+
       #if DEBUG
       struct __macro_local_12StubResponsefMu0_: StubbyResponseProvider {
         static let url = URL(string: "https://github.com")!
@@ -115,7 +115,7 @@ final class StubMacroTest: XCTestCase {
         }
       }
       #endif
-      
+
       #if DEBUG
       struct __macro_local_12StubResponsefMu1_: StubbyResponseProvider {
         static let url = URL(string: "https://apple.com")!
@@ -134,7 +134,7 @@ final class StubMacroTest: XCTestCase {
     }
   }
 
-  func test_expansionFailsWithInvalidURL() throws {
+  func test_expansionFailsWithInvalidURL() {
     assertMacro {
       """
       #Stub("") { request in
