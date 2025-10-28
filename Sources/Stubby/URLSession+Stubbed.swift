@@ -118,7 +118,7 @@ public struct Stub {
 
 // MARK: - ResponseProvider
 
-private struct ResponseProvider: StubbyResponseProvider {
+private final actor ResponseProvider: StubbyResponseProvider, Sendable {
 
   // MARK: Internal
 
