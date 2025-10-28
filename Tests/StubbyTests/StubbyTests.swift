@@ -20,7 +20,7 @@ final class StubbyTests: XCTestCase {
   }
 
   func test_stubbyResponse_failsWithUnsupportedURLError() {
-    let urlSession = URLSession.stubbed(url: .githubURL) { _ in
+    _ = URLSession.stubbed(url: .githubURL) { _ in
       .failure(URLError(.unsupportedURL))
     }
   }
@@ -48,7 +48,7 @@ final class StubbyTests: XCTestCase {
   }
 
   func test_stubbyResponse_succeeds() {
-    let urlSession = URLSession.stubbed(url: .repoURL) { request in
+    _ = URLSession.stubbed(url: .repoURL) { request in
       try .success(StubbyResponse(
         data: XCTUnwrap("Hello, world!".data(using: .utf8)),
         for: XCTUnwrap(request.url)
