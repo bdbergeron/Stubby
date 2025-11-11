@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 5.9
 
 import CompilerPluginSupport
 import PackageDescription
@@ -51,8 +51,16 @@ let package = Package(
         "StubbyMacros",
         "StubbyMacrosPlugin",
         .product(name: "MacroTesting", package: "swift-macro-testing"),
+        .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
       ]
     ),
   ],
-  swiftLanguageModes: [.v5]
+  swiftLanguageVersions: [.v5]
 )
+
+for target in package.targets {
+  target.swiftSettings = target.swiftSettings ?? []
+  target.swiftSettings?.append(contentsOf: [
+    .enableExperimentalFeature("StrictConcurrency")
+  ])
+}
