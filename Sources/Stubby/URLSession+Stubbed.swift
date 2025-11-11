@@ -1,6 +1,7 @@
 // Created by Brad Bergeron on 9/17/23.
 
 import Foundation
+import os
 
 extension URLSession {
   /// Create a `URLSession` with stubbed request handlers.
@@ -61,10 +62,10 @@ extension URLSession {
     _ stubs: [Stub]
   ) -> URLSession {
     for stub in stubs {
-      ResponseProvider.registerStub(stub)
+      StubResponseProvider.registerStub(stub)
     }
     return stubbed(
-      responseProvider: ResponseProvider.self,
+      responseProvider: StubResponseProvider.self,
       configuration: configuration,
       maintainExistingProtocolClasses: maintainExistingProtocolClasses
     )
@@ -83,7 +84,7 @@ extension URLSession {
     configuration: URLSessionConfiguration = .ephemeral,
     maintainExistingProtocolClasses: Bool = false,
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>
+    response: @escaping @Sendable (URLRequest) throws -> Result<StubbyResponse, Error>
   ) -> URLSession {
     stubbed(
       configuration: configuration,
@@ -97,13 +98,13 @@ extension URLSession {
 
 // MARK: - Stub
 
-public struct Stub {
+public struct Stub: Sendable {
 
   // MARK: Lifecycle
 
   public init(
     url: URL,
-    response: @escaping (URLRequest) throws -> Result<StubbyResponse, Error>
+    response: @escaping @Sendable (URLRequest) throws -> Result<StubbyResponse, Error>
   ) {
     self.url = url
     self.response = response
@@ -112,18 +113,18 @@ public struct Stub {
   // MARK: Public
 
   public let url: URL
-  public let response: (URLRequest) throws -> Result<StubbyResponse, Error>
+  public let response: @Sendable (URLRequest) throws -> Result<StubbyResponse, Error>
 
 }
 
 // MARK: - ResponseProvider
 
-private final actor ResponseProvider: StubbyResponseProvider, Sendable {
+private actor StubResponseProvider: StubbyResponseProvider {
 
   // MARK: Internal
 
   static func registerStub(_ stub: Stub) {
-    stubs[stub.url] = stub
+    stubs.withLock { $0[stub.url] = stub }
   }
 
   static func respondsTo(request _: URLRequest) -> Bool {
@@ -134,7 +135,7 @@ private final actor ResponseProvider: StubbyResponseProvider, Sendable {
     guard let url = request.url else {
       throw URLError(.badURL)
     }
-    guard let stub = stubs[url] else {
+    guard let stub = stubs.withLock({ $0[url] }) else {
       throw URLError(.unsupportedURL)
     }
     return try stub.response(request)
@@ -142,7 +143,7 @@ private final actor ResponseProvider: StubbyResponseProvider, Sendable {
 
   // MARK: Private
 
-  private static var stubs = [URL: Stub]()
+  private static let stubs: OSAllocatedUnfairLock<[URL: Stub]> = .init(initialState: [:])
 
 }
 

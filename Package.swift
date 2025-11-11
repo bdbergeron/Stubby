@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
   name: "Stubby",
   platforms: [
-    .iOS(.v13),
-    .macOS(.v10_15),
+    .iOS(.v16),
+    .macOS(.v13),
   ],
   products: [
     .library(name: "Stubby", targets: ["Stubby"]),
@@ -55,5 +55,5 @@ let package = Package(
       ]
     ),
   ],
-  swiftLanguageModes: [.v5]
+  swiftLanguageModes: [.v6]
 )
