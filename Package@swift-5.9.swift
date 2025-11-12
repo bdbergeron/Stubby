@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
   name: "Stubby",
   platforms: [
-    .iOS(.v13),
-    .macOS(.v10_15),
+    .iOS(.v16),
+    .macOS(.v13),
   ],
   products: [
     .library(name: "Stubby", targets: ["Stubby"]),
@@ -26,9 +26,6 @@ let package = Package(
       name: "StubbyTests",
       dependencies: [
         "Stubby",
-        "StubbyMacros",
-        .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-        .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),
     .target(
