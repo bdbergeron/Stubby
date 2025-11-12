@@ -26,9 +26,6 @@ let package = Package(
       name: "StubbyTests",
       dependencies: [
         "Stubby",
-        "StubbyMacros",
-        .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
-        .product(name: "MacroTesting", package: "swift-macro-testing"),
       ]
     ),
     .target(
